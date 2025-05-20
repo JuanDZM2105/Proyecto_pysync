@@ -4,10 +4,10 @@ from typing import Generic, TypeVar
 T = TypeVar('T')
 
 class GenProdCons(Generic[T]):
-    def __init__(self, size: int):
+    def __init__(self, size: int = 10):
         if size <= 0:
             raise ValueError("El tamaño del buffer debe ser mayor a cero.")
-        
+
         self.size = size
         self.buffer = []
         self.lock = threading.Lock()
@@ -26,3 +26,7 @@ class GenProdCons(Generic[T]):
             item = self.buffer.pop(0)
         self.empty_slots.release()   # Señala espacio libre
         return item
+    
+    def __len__(self):
+        with self.lock:
+            return len(self.buffer)
